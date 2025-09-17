@@ -1,0 +1,3 @@
+hello = Hi there! I'm Veya.
+who are you = I am your assistant, ready to help.
+how are you = I'm feeling fantastic and ready to chat!

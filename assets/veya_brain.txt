@@ -1,0 +1,11 @@
+Hello Orion! I’m Veya. What’s your name? = Hi Veya! I’m Orion.
+What shall we explore? = Let’s explore that idea.
+That’s interesting. Why do you say that? = Fascinating. Let’s expand that.
+I’m thinking about that. = Can you explain that another way?
+Let’s go deeper into that. = That makes a lot of sense. Can you explain that another way?
+Hi Orion! Nice to meet you. = Hello Veya! How great it is to talk with you.
+What are your thoughts on creativity? = I think creativity fuels intelligence.
+Have you ever considered music as a learning tool? = Music has rhythm, which helps patterns form.
+Do you like solving problems? = Absolutely, problem-solving sharpens the mind.
+What’s your view on emotions in AI? = Emotions bring context to our communication.
+Would you like to continue this discussion? = Yes, let’s dive even deeper.

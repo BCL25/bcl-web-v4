@@ -1,0 +1,28 @@
+#!/bin/bash
+
+echo "🧹 Starting BrightCodeLabz cleanup..."
+
+# Step 1: Remove duplicate beta folder
+if [ -d "public/beta" ]; then
+  rm -rf public/beta
+  echo "✅ Removed: public/beta/"
+fi
+
+# Step 2: Remove unused public HTML files
+for file in index.html contact.html about.html services.html portfolio.html downloads.html; do
+  if [ -f "public/$file" ]; then
+    rm -f "public/$file"
+    echo "🗑️ Removed: public/$file"
+  fi
+done
+
+# Step 3: Move stray brain files to main assets folder
+mkdir -p assets
+for file in veya_brain.txt orion_brain.txt learned_log.txt; do
+  if [ -f "$file" ]; then
+    mv "$file" assets/
+    echo "📁 Moved $file → assets/"
+  fi
+done
+
+echo "✅ Cleanup complete."
