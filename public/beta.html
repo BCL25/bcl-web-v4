@@ -5,77 +5,44 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Beta V.4 (stable)</title>
 <style>
-  :root{
-    --bg:#ffffff; --ink:#111; --muted:#555; --bar:#000; --accent:#d71920; --panel:#f7f7f7;
-    --stageW: 640px; --stageH: 220px; --frontSize: 220px; --backSize: 180px;
-    --swapMs: 1200ms; --dwellMs: 3500ms;
-    --modalRowH: 320px;
-  }
+  :root{ --bg:#ffffff; --ink:#111; --bar:#000; --accent:#d71920; --stageW: 260px; --stageH: 340px; }
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
-  /* Top bar */
-  .topbar{background:var(--bar); color:#fff; padding:10px 0;}
-  .nav{max-width:1100px;margin:0 auto;display:flex;gap:28px;align-items:center;justify-content:center;font-weight:600;letter-spacing:.5px;}
-  .nav a{color:#fff;text-decoration:none;opacity:.85}
-  .nav a.active{opacity:1;text-decoration:underline}
-  .container{max-width:1200px;margin:28px auto 60px;padding:0 18px;}
-  h1{text-align:center;letter-spacing:1px;margin:6px 0 16px;}
-  .duo-btn{display:block;margin:0 auto;background:var(--accent); color:#fff; border:0; border-radius:10px; padding:12px 22px; font-weight:700; cursor:pointer}
-  .duo-btn:hover{filter:brightness(.95)}
-  /* Showcase: [stage left] | [info right] */
-  .showcase{display:grid;grid-template-columns:minmax(320px, var(--stageW)) 1fr;align-items:center;gap:28px;margin-top:28px;}
-  @media (max-width: 980px){ :root{ --stageW: 560px; --frontSize: 200px; --backSize: 165px; } }
-  @media (max-width: 900px){ .showcase{ grid-template-columns:1fr; } }
-  /* Stage (left) */
-  .stage{position:relative;width:100%;max-width:var(--stageW);height:var(--stageH);margin:0 auto;perspective:900px;display:grid;place-items:center;}
-  .ellipse{position:absolute;inset:0;border-radius:50%;background:radial-gradient(ellipse at center, rgba(0,0,0,0.05), transparent 70%);}
-  .avatar-wrap{position:absolute;left:50%;top:50%;display:grid;place-items:center;transition:transform var(--swapMs) ease, z-index var(--swapMs) linear, filter var(--swapMs) ease, width var(--swapMs) ease, height var(--swapMs) ease;}
-  .avatar-wrap .avatar{width:100%;height:100%;object-fit:contain;object-position:center;border-radius:16px;background:#e9eef2;box-shadow:0 6px 20px rgba(0,0,0,.18), inset 0 0 0 1px rgba(0,0,0,.06);user-select:none;-webkit-user-drag:none;}
-  .front{ z-index:3; width:var(--frontSize); height:var(--frontSize); filter:none; }
-  .back { z-index:1; width:var(--backSize);  height:var(--backSize);  filter:brightness(.9) saturate(.95) blur(.1px); }
-  /* Use transform (not translate:) to avoid Safari issues */
-  .centered{ transform: translate(-50%,-50%); }
-  /* Shallow anti-clockwise arc */
-  @keyframes toBack {
-    0%{ transform: translate(-50%,-50%) translateX(0) translateY(0) rotateZ(0deg) }
-    50%{ transform: translate(-50%,-50%) translateX(150px) translateY(20px) rotateZ(-1.5deg) }
-    100%{ transform: translate(-50%,-50%) translateX(0) translateY(0) rotateZ(0deg) }
-  }
-  @keyframes toFront {
-    0%{ transform: translate(-50%,-50%) translateX(0) translateY(0) rotateZ(0deg) }
-    50%{ transform: translate(-50%,-50%) translateX(-150px) translateY(-20px) rotateZ(-1.5deg) }
-    100%{ transform: translate(-50%,-50%) translateX(0) translateY(0) rotateZ(0deg) }
-  }
-  .anim-to-back{ animation: toBack var(--swapMs) ease forwards; }
-  .anim-to-front{ animation: toFront var(--swapMs) ease forwards; }
-  /* Info panel (right) */
-  .info{background:var(--panel);border:1px solid #e6e6e6;border-radius:12px;padding:18px;}
-  .info h2{ margin:0 0 6px; font-size:18px; }
-  .info p{ margin:0 0 10px; color:var(--muted); }
-  .quotes{ display:flex; flex-wrap:wrap; gap:8px; }
-  .quote{ background:#fff; border:1px solid #e7e7e7; border-radius:10px; padding:7px 10px; font-size:14px; color:#333; }
-  /* Modal (Duo Chat) */
-  .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; z-index:30;}
-  .modal{position:fixed; inset:0; display:none; z-index:40; place-items:center;}
-  .card{width:min(100% - 32px, 1100px); background:#fff; color:#111;border-radius:16px; border:1px solid #ddd; padding:16px; box-shadow:0 30px 80px rgba(0,0,0,.35);}
-  .card-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
-  .card-head h2{margin:0; font-size:18px;}
-  .close{margin-left:auto; border:1px solid #ddd; background:#f7f7f7; padding:8px 12px; border-radius:10px; cursor:pointer}
-  .grid{display:grid; grid-template-columns: 1fr 1.2fr 1fr; gap:18px; align-items:center; height: var(--modalRowH); }
-  .portrait{width:260px; height:260px; max-width:100%; object-fit:contain; border-radius:16px; background:#eef2f5; transition: box-shadow .25s ease;}
-  .transcript{height: var(--modalRowH); background:#fafafa; border:1px solid #e9e9e9; border-radius:12px; padding:12px; color:#333; overflow:auto;}
-  .muted{color:#666; font-size:13px; text-align:center; margin-top:6px;}
-  @media (max-width:900px){ .grid{grid-template-columns:1fr; height:auto} .transcript{height:260px;} }
-  .line { margin: 6px 0; }
-  .line.left  { text-align: left; }
-  .line.right { text-align: right; }
-  .bubble { display:inline-block; padding:8px 10px; border-radius:12px; border:1px solid #e0e0e0; background:#fff; color:#222; max-width:85%; }
-  .left  .bubble { background:#eef6ff; border-color:#d6e8ff; }
-  .right .bubble { background:#f7f3ff; border-color:#e8dfff; }
-  .speaking { box-shadow: 0 0 0 3px rgba(51,177,255,.35), 0 8px 28px rgba(0,0,0,.25); }
+  .topbar{background:#000;color:#fff;}
+  .nav{max-width:1200px;margin:0 auto;display:flex;gap:36px;align-items:center;justify-content:center;padding:14px 16px;font-weight:700}
+  .nav a{color:#fff;text-decoration:none;opacity:.9}
+  .nav a:hover,.nav a.active{opacity:1;text-decoration:underline}
+  .wrap{text-align:center;margin:28px auto}
+  h1{margin:12px 0 18px;font-size:32px}
+  .duo-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 20px;font-weight:700;cursor:pointer}
+  .stage{width:var(--stageW);height:var(--stageH);margin:30px auto;perspective:1000px;}
+  .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 1.2s ease-in-out;}
+  .card.flip{transform:rotateY(180deg);}
+  .cardFace{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:16px;overflow:hidden}
+  .cardFace img{width:100%;height:100%;object-fit:cover;}
+  .cardBack{transform:rotateY(180deg);}
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:30}
+  .modal{position:fixed;inset:0;display:none;z-index:40;place-items:center}
+  .cardModal{width:min(100% - 32px, 1000px);background:#fff;border-radius:16px;padding:18px}
+  .card-head{display:flex;align-items:center;margin-bottom:12px}
+  .card-head h2{margin:0;font-size:20px}
+  .close{margin-left:auto;border:1px solid #ddd;background:#f7f7f7;padding:6px 10px;border-radius:6px;cursor:pointer}
+  .grid{display:grid;grid-template-columns:200px 1fr 200px;gap:18px;align-items:center;margin-bottom:14px}
+  .portrait{width:100%;max-width:180px;border-radius:12px}
+  .muted{text-align:center;font-size:14px;color:#666;margin-top:6px}
+  .transcript{height:280px;background:#fafafa;border:1px solid #e9e9e9;border-radius:12px;padding:12px;overflow:auto}
+  .line{margin:6px 0}
+  .line .bubble{display:inline-block;padding:8px 10px;border-radius:12px;border:1px solid #e0e0e0;background:#fff;max-width:85%}
+  .line.left{text-align:left}
+  .line.right{text-align:right}
+  .left .bubble{background:#eef6ff}
+  .right .bubble{background:#f7f3ff}
+  .controls{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .controls input{flex:1;min-width:260px;padding:8px;border:1px solid #ccc;border-radius:6px}
+  .controls button{padding:8px 14px;border:none;border-radius:6px;cursor:pointer;color:#fff}
+  .btnV{background:#28a745}.btnO{background:#17a2b8}.btnB{background:#007bff}
 </style>
 </head>
 <body>
-  <!-- NAV -->
   <div class="topbar">
     <nav class="nav">
       <a href="#">HOME</a><a href="#">ABOUT</a><a href="#">SERVICES</a>
@@ -83,236 +50,108 @@
       <a href="#" class="active">BETA</a><a href="#">DOWNLOAD</a>
     </nav>
   </div>
-
-  <div class="container">
+  <div class="wrap">
     <h1>BETA V.4 (stable)</h1>
-    <button class="duo-btn" id="openDuo">Duo Chat</button>
-
-    <!-- SHOWCASE: [stage left] | [info right] -->
-    <section class="showcase" aria-label="Duo showcase">
-      <!-- Left: stage -->
-      <div class="stage" id="stage">
-        <div class="ellipse" aria-hidden="true"></div>
-
-        <!-- Front starts as Veya -->
-        <div class="avatar-wrap centered front" id="veyaWrap" data-who="veya">
-          <img src="./assets/veya.png" alt="Veya" class="avatar" />
-        </div>
-        <!-- Back starts as Orion -->
-        <div class="avatar-wrap centered back" id="orionWrap" data-who="orion">
-          <img src="./assets/orion.png" alt="Orion" class="avatar" />
-        </div>
-      </div>
-
-      <!-- Right: single info panel that flips content -->
-      <div class="info" id="infoPanel" aria-live="polite"></div>
-    </section>
+    <button id="openDuo" class="duo-btn">Duo Chat</button>
+  </div>
+  <div class="stage">
+    <div id="flipCard" class="card">
+      <div class="cardFace cardFront"><img src="./assets/veya.png" alt="Veya"></div>
+      <div class="cardFace cardBack"><img src="./assets/orion.png" alt="Orion"></div>
+    </div>
   </div>
 
-  <!-- MODAL -->
-  <div class="backdrop" id="duoBackdrop" hidden></div>
-  <div class="modal" id="duoModal" role="dialog" aria-modal="true" aria-labelledby="duoTitle" hidden>
-    <div class="card">
+  <div id="duoBackdrop" class="backdrop"></div>
+  <div id="duoModal" class="modal">
+    <div class="cardModal">
       <div class="card-head">
-        <h2 id="duoTitle">Veya &amp; Orion — Duo</h2>
+        <h2>Veya &amp; Orion — Duo</h2>
         <button class="close" id="closeDuo">Close</button>
       </div>
       <div class="grid">
-        <div style="display:grid;place-items:center;">
-          <img src="./assets/veya.png" alt="Veya" class="portrait" id="portraitVeya" />
-          <div class="muted">Veya</div>
-        </div>
-        <div class="transcript" id="transcript"><em class="muted">Listening…</em></div>
-        <div style="display:grid;place-items:center;">
-          <img src="./assets/orion.png" alt="Orion" class="portrait" id="portraitOrion" />
-          <div class="muted">Orion</div>
-        </div>
+        <div><img src="./assets/veya.png" class="portrait"/><div class="muted">Veya</div></div>
+        <div class="transcript" id="transcript"><em style="color:#666;font-size:13px;">Type a message…</em></div>
+        <div><img src="./assets/orion.png" class="portrait"/><div class="muted">Orion</div></div>
+      </div>
+      <div class="controls">
+        <input type="text" id="userInput" placeholder="Type your message…"/>
+        <button id="sendVeya" class="btnV">Send to Veya</button>
+        <button id="sendOrion" class="btnO">Send to Orion</button>
+        <button id="sendBoth" class="btnB">Send to Both</button>
       </div>
     </div>
   </div>
 
 <script>
 (() => {
-  // ---- Defensive helpers ----
-  const $ = (sel) => document.querySelector(sel);
-  const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
+  const $ = s => document.querySelector(s);
+  const transcript = $('#transcript');
+  let voices = [], avaVoice=null, nathanVoice=null;
 
-  // ---------- Persona content (rotating blurbs) ----------
-  const PERSONAS = {
-    veya: {
-      name: "Veya",
-      blurbs: [
-        "Curious, connective thinker—bridges science and art.",
-        "Loves turning hunches into hypotheses.",
-        "Keeps asking: what’s the boundary between known and unknown?"
-      ],
-      quotes: [
-        "What shall we explore?",
-        "I’m thinking about that.",
-        "That’s interesting—why do you say that?",
-        "Let’s map this idea to something tangible."
-      ],
-      bi: 0, qi: 0
-    },
-    orion: {
-      name: "Orion",
-      blurbs: [
-        "Analytical and grounded—tests claims against evidence.",
-        "Values clarity, useful detail, and clean definitions.",
-        "Always asks: how would we test that?"
-      ],
-      quotes: [
-        "Let’s explore that idea.",
-        "That makes sense—can you elaborate?",
-        "Can you explain that another way?",
-        "What would count as a good test?"
-      ],
-      bi: 0, qi: 0
-    }
-  };
-  const infoPanel = $('#infoPanel');
-  function personaHTML(P){
-    const blurb = P.blurbs[P.bi]; P.bi = (P.bi+1) % P.blurbs.length;
-    const quote = P.quotes[P.qi]; P.qi = (P.qi+1) % P.quotes.length;
-    return `<h2>${P.name}</h2><p>${blurb}</p><div class="quotes"><div class="quote">“${quote}”</div></div>`;
+  function loadVoices(){
+    voices = speechSynthesis.getVoices();
+    avaVoice = voices.find(v=>v.name === "Ava (Enhanced)") || voices.find(v=>v.name === "Ava") || null;
+    nathanVoice = voices.find(v=>v.name === "Nathan") || null; // force standard Nathan
   }
-  function setPersona(who){ infoPanel.innerHTML = personaHTML(PERSONAS[who]); }
-  setPersona('veya'); // initial
+  speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
 
-  // ---------- Spin control (robust) ----------
-  const dwellMs = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--dwellMs')) || 3500;
-  const swapMs  = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--swapMs')) || 1200;
+  function speak(text, speaker){
+    if(!window.speechSynthesis) return;
+    const utter = new SpeechSynthesisUtterance(text);
+    if(speaker==="Veya" && avaVoice) utter.voice = avaVoice;
+    if(speaker==="Orion" && nathanVoice) utter.voice = nathanVoice;
+    speechSynthesis.speak(utter);
+  }
 
-  const veyaWrap  = $('#veyaWrap');
-  const orionWrap = $('#orionWrap');
-
-  let front = 'veya'; // track who's front without swapping IDs
-
-  setInterval(() => {
-    const f = front === 'veya' ? veyaWrap : orionWrap;
-    const b = front === 'veya' ? orionWrap : veyaWrap;
-
-    // animate arc
-    f.classList.add('anim-to-back'); b.classList.add('anim-to-front');
-    f.classList.remove('front'); f.classList.add('back');
-    b.classList.remove('back');  b.classList.add('front');
-
-    // after animation completes
-    setTimeout(() => {
-      f.classList.remove('anim-to-back'); b.classList.remove('anim-to-front');
-      // update info text to whoever is *now* front
-      front = (front === 'veya') ? 'orion' : 'veya';
-      setPersona(front);
-    }, swapMs);
-  }, dwellMs + swapMs);
-
-  // ---------- Duo modal: greet → greet → stream + speak ----------
-  const openDuo  = $('#openDuo');
-  const modal    = $('#duoModal');
-  const backdrop = $('#duoBackdrop');
-  const closeBtn = $('#closeDuo');
-  const transcriptEl = $('#transcript');
-  const portraitVeya  = $('#portraitVeya');
-  const portraitOrion = $('#portraitOrion');
-
-  let es = null;
-  let glowTimer = null;
-
-  function escapeHTML(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function addLine({ speaker, text, ts }) {
-    const side = speaker === 'Veya' ? 'left' : 'right';
+  function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function addLine(speaker,text, speakIt=true){
+    const side = speaker==='Veya' ? 'left' : speaker==='Orion' ? 'right' : 'left';
     const row = document.createElement('div');
     row.className = `line ${side}`;
-    const time = new Date(ts).toLocaleTimeString();
-    row.innerHTML = `<span class="bubble"><strong>${escapeHTML(speaker)}</strong> <small style="opacity:.6">${time}</small><br>${escapeHTML(text)}</span>`;
-    transcriptEl.appendChild(row);
-    transcriptEl.scrollTop = transcriptEl.scrollHeight;
-  }
-  function flashSpeaker(speaker){
-    clearTimeout(glowTimer);
-    if (speaker === 'Veya') { portraitOrion.classList.remove('speaking'); portraitVeya.classList.add('speaking'); }
-    else { portraitVeya.classList.remove('speaking'); portraitOrion.classList.add('speaking'); }
-    glowTimer = setTimeout(() => { portraitVeya.classList.remove('speaking'); portraitOrion.classList.remove('speaking'); }, 900);
+    row.innerHTML = `<span class="bubble"><strong>${escapeHTML(speaker)}:</strong> ${escapeHTML(text)}</span>`;
+    transcript.appendChild(row);
+    transcript.scrollTop = transcript.scrollHeight;
+    if(speakIt && (speaker==="Veya" || speaker==="Orion")) speak(text,speaker);
   }
 
-  // Speech (Ava Premium / Nathan Enhanced with fallbacks)
-  const Speech = {
-    voices: [], vV:null, vO:null,
-    pick() {
-      const all = window.speechSynthesis ? speechSynthesis.getVoices() : [];
-      this.voices = all;
-      const has = (v,...subs)=>subs.every(s=>v.name && v.name.toLowerCase().includes(s));
-      const any = (re)=>all.find(v=>re.test(v.name||""))||null;
-      this.vV = all.find(v=>has(v,"ava","premium")) || any(/ava/i) || all[0] || null;
-      this.vO = all.find(v=>has(v,"nathan","enhanced")) || any(/nathan/i) || all[1] || all[0] || null;
-    },
-    say(who, text){
-      if (!window.speechSynthesis) return;
-      if (!this.voices.length) this.pick();
-      const u = new SpeechSynthesisUtterance(text);
-      if (who === 'Veya') { u.voice=this.vV; u.pitch=1.08; u.rate=1.02; }
-      else { u.voice=this.vO; u.pitch=0.96; u.rate=1.0; }
-      try { speechSynthesis.speak(u); } catch {}
-    },
-    stop(){ try { speechSynthesis.cancel(); } catch {} }
-  };
-  if (window.speechSynthesis) {
-    speechSynthesis.onvoiceschanged = () => Speech.pick();
-    Speech.pick();
+  // Flip animation
+  let flipped=false;
+  setInterval(()=>{$('#flipCard').classList.toggle('flip', flipped=!flipped);},5000);
+
+  // Modal open/close
+  $('#openDuo').addEventListener('click',()=>{ $('#duoModal').style.display='grid'; $('#duoBackdrop').style.display='block'; });
+  $('#closeDuo').addEventListener('click',()=>{ $('#duoModal').style.display='none'; $('#duoBackdrop').style.display='none'; });
+  $('#duoBackdrop').addEventListener('click',()=>{ $('#duoModal').style.display='none'; $('#duoBackdrop').style.display='none'; });
+
+  async function sendTo(speaker){
+    const inputEl=$('#userInput'); const text=inputEl.value.trim(); if(!text) return;
+    inputEl.value="";
+    addLine("You → "+speaker,text,false);
+    try{
+      const res=await fetch('/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({speaker,input:text})});
+      const data=await res.json();
+      addLine(speaker,data.response,true);
+    }catch(e){addLine("System","Server error",false);}
   }
 
-  async function startServerChat(){
-    try { await fetch('/start', { method:'POST' }); } catch {}
-    es = new EventSource('/events');
-    es.onmessage = (ev) => {
-      try {
-        const data = JSON.parse(ev.data);
-        addLine(data);
-        flashSpeaker(data.speaker);
-        Speech.say(data.speaker, data.text);
-      } catch {}
-    };
-    es.onerror = () => {}; // let SSE retry silently
-  }
-  async function stopServerChat(){
-    if (es) { es.close(); es = null; }
-    try { await fetch('/stop', { method:'POST' }); } catch {}
-    Speech.stop();
+  async function sendBoth(){
+    const inputEl=$('#userInput'); const text=inputEl.value.trim(); if(!text) return;
+    inputEl.value="";
+    addLine("You → Both",text,false);
+    try{
+      const res=await fetch('/askBoth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:text})});
+      const data=await res.json();
+      if(data && data.response){
+        addLine("Veya",data.response.veya,true);
+        addLine("Orion",data.response.orion,true);
+      }
+    }catch(e){addLine("System","Server error",false);}
   }
 
-  function openModal(){
-    // show
-    modal.hidden=false; backdrop.hidden=false;
-    modal.style.display='grid'; backdrop.style.display='block';
-    closeBtn.focus();
-
-    // clear transcript
-    transcriptEl.innerHTML = "";
-
-    // greetings (guaranteed speech after user gesture)
-    const t1 = { speaker:"Veya", text:"Hi Orion — ready to explore a few ideas together?", ts:new Date().toISOString() };
-    addLine(t1); flashSpeaker("Veya"); Speech.say("Veya", t1.text);
-
-    setTimeout(() => {
-      const t2 = { speaker:"Orion", text:"Hey Veya. I’m set. Let’s start with a question and see where it leads.", ts:new Date().toISOString() };
-      addLine(t2); flashSpeaker("Orion"); Speech.say("Orion", t2.text);
-      setTimeout(() => startServerChat(), 300);
-    }, 900);
-  }
-  function closeModal(){
-    stopServerChat();
-    modal.hidden=true; backdrop.hidden=true;
-    modal.style.display='none'; backdrop.style.display='none';
-    $('#openDuo').focus();
-  }
-
-  on($('#openDuo'), 'click', openModal);
-  on($('#closeDuo'), 'click', closeModal);
-  on($('#duoBackdrop'), 'click', closeModal);
-  on(window, 'keydown', (e)=>{ if(e.key==='Escape' && modal && !modal.hidden) closeModal(); });
-
-  // Tiny console hint if something breaks
-  window.addEventListener('error', e => console.warn('Beta page error:', e.message));
+  $('#sendVeya').addEventListener('click',()=>sendTo("Veya"));
+  $('#sendOrion').addEventListener('click',()=>sendTo("Orion"));
+  $('#sendBoth').addEventListener('click',sendBoth);
 })();
 </script>
 </body>
